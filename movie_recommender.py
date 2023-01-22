@@ -40,13 +40,18 @@ class recommender():
 
             self.i += 1
 
+
         #create labelencoder variable and load classes from the elements folder
         self.le = LabelEncoder()
         self.le.classes_ = np.load('elements/classes.npy', allow_pickle=True)
-        #encode the titles in df
-        self.df['title'] = self.le.transform(self.df['title'])
+        #load movie titles and transform them into to strin, to check if the user watched movie
+        #what is not included in the model
+        self.titles = pd.read_csv('elements/titles.csv', sep=';', index_col=[0])['title']
+        self.titles = self.le.inverse_transform(self.titles)
         #if df contains titles what are not in the pretrained model, delete them
-        self.df = self.df[self.df['title'].isin(pd.read_csv('elements/titles.csv', sep=';', index_col=[0])['title'])]
+        self.df = self.df[self.df['title'].isin(self.titles)]
+        # encode the titles in df
+        self.df['title'] = self.le.transform(self.df['title'])
         #create a copy for later tasks
         self.df_copy = self.df.copy()
         #transform df to wide matrix
@@ -69,5 +74,5 @@ class recommender():
 
 
 if __name__ == "__main__":
-    #recommender('salty_')
+    recommender('')
     pass
